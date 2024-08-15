@@ -6,15 +6,20 @@ use App\Filament\Resources\FactResource\Pages;
 use App\Filament\Resources\FactResource\RelationManagers;
 use App\Models\Fact;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Resources\Concerns\Translatable;
 
 class FactResource extends Resource
 {
+
+    use Translatable;
+
     protected static ?string $model = Fact::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -27,8 +32,12 @@ class FactResource extends Resource
                     ->maxLength(255),
                 Forms\Components\Textarea::make('content')
                     ->columnSpanFull(),
-                Forms\Components\TextInput::make('status')
-                    ->maxLength(255),
+                Select::make('status')
+                    ->options([
+                        'draft' => 'Draft',
+                        'published' => 'Published',
+                        'archived' => 'Archived',
+                    ])->default('draft'),
                 Forms\Components\TextInput::make('source')
                     ->maxLength(255),
                 Forms\Components\DateTimePicker::make('fact_checked_at'),
@@ -84,5 +93,10 @@ class FactResource extends Resource
             'create' => Pages\CreateFact::route('/create'),
             'edit' => Pages\EditFact::route('/{record}/edit'),
         ];
+    }
+
+    public static function getTranslatableLocales(): array
+    {
+        return ['da', 'en'];
     }
 }
